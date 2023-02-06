@@ -1,0 +1,24 @@
+use empresa_de_limpieza;
+
+select * from clientes;
+
+create view Clientes_Actuales as
+select id_Cliente,dni_Cliente,nombres,apellidos,Correo,telefono,direccion from clientes;
+
+select * from empleados;
+
+create view Empleados_Actuales as
+select dni_Empleado,nombres,apellidos,fecha_ingreso,telefono from empleados;
+
+select * from proveedores;
+
+create view Proveedores_2023 as
+select nombres,localidad,telefono,correo from proveedores;
+
+select * from datos;
+create view Datos_Actuales as
+select telefono,correo,direccion from datos;
+
+select * from productos;
+create view Productos_2023 as
+select id_producto,nombres_producto,precio from productos;
