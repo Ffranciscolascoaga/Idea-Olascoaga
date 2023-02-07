@@ -95,3 +95,21 @@ insert into contrato values
 ("3","4"),
 ("4","5"),
 ("5","3");
+
+
+insert into servicio values
+("SI","NO","NO","NO"),
+("NO","NO","SI","NO"),
+("NO","NO","NO","SI"),
+("NO","SI","NO","NO"),
+("SI","NO","NO","NO");
+SELECT * FROM servicio;
+
+
+select * from Seguros;
+insert into Seguros values 
+("1","1","Francisco Almeyda","SEGUROS SRL"),
+("2","2","Jesus Suarez","SEGUROS SRL"),
+("3","3","Tomas Benito","SEGUROS SRL"),
+("4","4","Franco Alessandreli","SEGUROS SRL"),
+("5","5","Nicolas Gauna","SEGUROS SRL");
