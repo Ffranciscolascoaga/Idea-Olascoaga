@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `Empresa` (
     CREATE TABLE IF NOT EXISTS `facturas` (
     id_Facturas INT NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
     id_Proveedor VARCHAR(50) NOT NULL,
-    precio numeric(10,2)
+    clientes varchar(50)
 );
    select * from facturas;
    
@@ -147,11 +147,11 @@ Create Table if not Exists `FormaDe_Pago` (
     
     Create Table if not Exists Equipacion (
     Equipacion varchar (50) not null ,
-   ID_Proveedores int not null primary key,
+   ID_Proveedores int not null,
    Maquinas varchar (100),
    Camionetas varchar (100),
-   Existencias varchar (50)
-    );
+   Existencias varchar (50),
+   foreign key (ID_Proveedores) references Proveedores (id_proveedor));
     select * from equipacion;
     
       Drop table if exists  `Contrato`;
