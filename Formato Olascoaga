@@ -1,0 +1,32 @@
+use empresa_de_limpieza;
+
+
+    drop function saludar;
+    DELIMITER //
+CREATE FUNCTION saludar(nombres VARCHAR(50), apellidos VARCHAR(50), correo VARCHAR(100)) RETURNS VARCHAR(150)
+deterministic
+  BEGIN
+    DECLARE nombre_completo VARCHAR(100);
+    SET nombre_completo = CONCAT(nombres, " ", apellidos);
+    IF correo IS NOT NULL THEN
+      RETURN CONCAT("Bienvenido"," ", nombre_completo);
+    ELSE
+      RETURN "Aun no tenes Email";
+    END IF;
+  END//
+  
+SELECT id_Empleado, nombres, apellidos, correo, saludar(nombres, apellidos, correo) AS 'Saludo' FROM empleados;
+
+
+ #DUDA: Tengo un problema con la sintaxis para calcular el iva. Quiero poner en una columna el % correspondiente a los precios de productos#
+DROP FUNCTION IF EXISTS iva;
+DELIMITER //
+CREATE FUNCTION iva (gama int) RETURNS decimal (10,2);
+  deterministic
+DECLARE precio_iva (10,2) INT;
+BEGIN
+  SET total = (SELECT precio + 21% FROM produtos);
+  
+RETURN precio_iva;
+END
+//;
