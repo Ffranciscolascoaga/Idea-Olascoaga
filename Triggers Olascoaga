@@ -1,0 +1,26 @@
+
+                                        -- Creacion de Triggers--
+
+-- Primero se crea una tabla "datos_2" 
+drop table datos_2;
+create table datos_2 (celular varchar (20), mail varchar (100), direccion varchar (50), usuario varchar (50), fecha_registro datetime);
+
+#se crea un trigger AFTER para que cada vez que se registre los datos de los clientes se registren tambien en la tabla "datos_2"
+
+drop trigger Clientes_Extra;
+Create trigger Clientes_Extra after insert on clientes for each row insert into datos_2 (celular, mail, direccion, usuario, fecha_registro)
+ values  (new.telefono, new.correo, new.direccion, current_user(),now())
+ 
+
+select * from productos;
+
+-- se crea una tabla para los precios actuliazados de los productos
+drop table productos_actualizados;
+create table productos_actualizados ( precio_anterior int, precio_nuevo int, fecha_registro datetime, proveedor varchar (100), nombre_producto varchar (100));
+select * from productos_actualizados;
+
+-- se crea un Trigger para que se actualicen los precios nuevos acorde a los anteriores 
+
+create trigger precios_actualizados before update on productos
+for each row insert into productos_actualizados (precio_anterior, precio_nuevo, fecha_registro, proveedor, nombre_producto)
+values (old.precio_anterior, now.precio_nuevo, now.fecha_registro, now.proveedor, now.nombre_producto, current_user(), now());
