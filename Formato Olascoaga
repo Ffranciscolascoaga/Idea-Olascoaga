@@ -18,15 +18,18 @@ deterministic
 SELECT id_Empleado, nombres, apellidos, correo, saludar(nombres, apellidos, correo) AS 'Saludo' FROM empleados;
 
 
- #DUDA: Tengo un problema con la sintaxis para calcular el iva. Quiero poner en una columna el % correspondiente a los precios de productos#
 DROP FUNCTION IF EXISTS iva;
 DELIMITER //
-CREATE FUNCTION iva (gama int) RETURNS decimal (10,2);
+CREATE FUNCTION iva (iva int) returns decimal (10,2)
+  NO SQL
   deterministic
-DECLARE precio_iva (10,2) INT;
-BEGIN
-  SET total = (SELECT precio + 21% FROM produtos);
+  BEGIN
+DECLARE precio_iva decimal (10,2);
+
+  SET precio_iva = (select precio *((iva/100) + 1) from productos limit 1);
   
 RETURN precio_iva;
 END
 //;
+
+select *, iva(21) as "PreciosConIva" FROM productos;
