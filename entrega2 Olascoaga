@@ -1,0 +1,142 @@
+
+-- creacion de vistas
+
+use empresa_de_limpieza;
+
+select * from clientes;
+
+create view Clientes_Actuales as
+select id_Cliente,dni_Cliente,nombres,apellidos,Correo,telefono,direccion from clientes;
+
+select * from empleados;
+
+create view Empleados_Actuales as
+select dni_Empleado,nombres,apellidos,fecha_ingreso,telefono from empleados;
+
+select * from proveedores;
+
+create view Proveedores_2023 as
+select nombres,localidad,telefono,correo from proveedores;
+
+select * from datos;
+create view Datos_Actuales as
+select telefono,correo,direccion from datos;
+
+select * from productos;
+create view Productos_2023 as
+select id_producto,nombres_producto,precio from productos;
+
+-- creacion de FUNCIONES
+
+-- el objetivo de esta funcion es mandarle un mensaje de bienvenida a los empleados
+use empresa_de_limpieza;
+
+
+    drop function saludar;
+    DELIMITER //
+CREATE FUNCTION saludar(nombres VARCHAR(50), apellidos VARCHAR(50), correo VARCHAR(100)) RETURNS VARCHAR(150)
+deterministic
+  BEGIN
+    DECLARE nombre_completo VARCHAR(100);
+    SET nombre_completo = CONCAT(nombres, " ", apellidos);
+    IF correo IS NOT NULL THEN
+      RETURN CONCAT("Bienvenido"," ", nombre_completo);
+    ELSE
+      RETURN "Aun no tenes Email";
+    END IF;
+  END//
+  
+SELECT id_Empleado, nombres, apellidos, correo, saludar(nombres, apellidos, correo) AS 'Saludo' FROM empleados;
+
+-- esta funcion se crea con el fin de calcular el iva en los precios de los productos
+ 
+DROP FUNCTION IF EXISTS iva;
+DELIMITER //
+CREATE FUNCTION iva (iva int) returns decimal (10,2)
+  NO SQL
+  deterministic
+  BEGIN
+DECLARE precio_iva decimal (10,2);
+
+  SET precio_iva = (select precio *((iva/100) + 1) from productos limit 1);
+  
+RETURN precio_iva;
+END
+//;
+
+select *, iva(21) as "PreciosConIva" FROM productos;
+
+-- creacion de store procedures 
+
+-- Procedimiento almacenado para mostrar Clientes actuales
+USE `empresa_de_limpieza`;
+DROP procedure IF EXISTS `sp_MostrarClientes`;
+
+DELIMITER $$
+USE `empresa_de_limpieza`$$
+CREATE PROCEDURE `sp_MostrarClientes` ()
+BEGIN
+     select * from clientes;
+END$$
+
+DELIMITER ;
+call sp_MostrarClientes();
+
+-- Procedimiento almacenado para registrar nuevos clientes
+
+USE `empresa_de_limpieza`;
+DROP procedure IF EXISTS `sp_Clientes_Nuevos`;
+
+USE `empresa_de_limpieza`;
+DROP procedure IF EXISTS `empresa_de_limpieza`.`sp_Clientes_Nuevos`;
+;
+
+DELIMITER $$
+USE `empresa_de_limpieza`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Clientes_Nuevos`( in DNI int,
+                                       in nombre varchar (50),
+                                      in apellido varchar (50),
+                                      in email varchar (100),
+                                      in tel int,
+                                      in direc varchar (100),
+                                      in EmpresaP varchar (100),
+                                      in Pago_Con varchar (50))
+BEGIN
+     insert into clientes (dni_Cliente, nombres, apellidos, Correo, telefono, direccion, Empresa, Metodo_Pago) values (DNI,nombre,apellido, email,tel, direc, EmpresaP, Pago_con);
+END$$
+
+DELIMITER ;
+;
+
+call sp_Clientes_Nuevos(43555678,"Julio","Roca","Julioroca123@gmail.com",221456789,"Azcuenaga 1230","INSUMOS ALCORTA","Efectivo");
+
+call sp_MostrarClientes();
+
+select * from clientes;
+
+
+                                        -- Creacion de Triggers--
+
+-- Primero se crea una tabla "datos_2" 
+drop table datos_2;
+create table datos_2 (celular varchar (20), mail varchar (100), direccion varchar (50), usuario varchar (50), fecha_registro datetime);
+
+#se crea un trigger AFTER para que cada vez que se registre los datos de los clientes se registren tambien en la tabla "datos_2"
+
+drop trigger Clientes_Extra;
+Create trigger Clientes_Extra after insert on clientes for each row insert into datos_2 (celular, mail, direccion, usuario, fecha_registro)
+ values  (new.telefono, new.correo, new.direccion, current_user(),now())
+ 
+
+select * from productos;
+
+-- se crea una tabla para los precios actuliazados de los productos
+drop table productos_actualizados;
+create table productos_actualizados ( precio_anterior int, precio_nuevo int, fecha_registro datetime, proveedor varchar (100), nombre_producto varchar (100));
+select * from productos_actualizados;
+
+-- se crea un Trigger para que se actualicen los precios nuevos acorde a los anteriores 
+
+create trigger precios_actualizados before update on productos
+for each row insert into productos_actualizados (precio_anterior, precio_nuevo, fecha_registro, proveedor, nombre_producto)
+values (old.precio_anterior, now.precio_nuevo, now.fecha_registro, now.proveedor, now.nombre_producto, current_user(), now());
