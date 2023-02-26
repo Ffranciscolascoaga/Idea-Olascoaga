@@ -1,0 +1,29 @@
+ use empresa_de_limpieza;
+ 
+ -- Se crean dos usuarios, Localhost y Empresa_interesada
+ create user "Franciscolocalhost" identified by "ALL123";
+  show grants for "Franciscolocalhost";
+  DROP USER "Localhost";
+ rename user "Franciscolocalhost" to "Localhost";
+ grant show view, select,insert, update on *.* to "Localhost";
+ 
+  -- permisos de lectura, insercion y modificacion de datos
+ grant show view, insert, update on *.* to "Localhost";
+ 
+ revoke show view,select, insert, update on *.* from "localhost";
+ 
+ show grants for "Localhost";
+ 
+ -- empresa interesada, es la que esta por comprar la empresa de limpieza
+
+drop user  "Empresa_interesada";
+ create user "Empresa_interesada" identified by "ALL123";
+ 
+ 
+ 
+ -- 
+ show grants on  "Empresa_interesada";
+ # Empresa_interesada solo podra hacer lectura de todos los datos en las tablas
+ grant select on *.* to  "Empresa_interesada";
+ 
+ show grants for "Empresa_interesada";
