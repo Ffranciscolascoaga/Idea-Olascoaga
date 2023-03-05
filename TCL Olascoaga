@@ -1,0 +1,48 @@
+use empresa_de_limpieza;
+
+-- 1) en la primera tabla, eliminar algunos, dejar una linea con la sentencia Rollback y una posterior con la sentencia commit.
+
+set autocommit =0;
+
+select * from clientes;
+
+
+start transaction;
+delete from clientes where id_Cliente = 1 and dni_Cliente = 4188786;
+select * from clientes;
+
+rollback;
+
+start transaction;
+delete from clientes where id_Cliente = 1 and dni_Cliente = 4188786;
+select * from clientes;
+commit;
+
+start transaction;
+delete from clientes where id_Cliente = 2 and dni_Cliente =4388323 ;
+select * from clientes;
+
+rollback;
+
+start transaction;
+delete from clientes where id_Cliente = 2 and dni_Cliente =4388323 ;
+select * from clientes;
+commit;
+
+-- 2) insertar 8 nuevos registros con una transaccion.
+-- un savepoint despues del registro #4, y otro post registro #8
+
+select  * from clientes;
+
+start transaction;
+insert into clientes values (7, 25144555, "Diego","Sosa","Diegososa@gmail.com",2314549876,"olascoaga 12","INSUMOS SRL", "Mercado Pago");
+insert into clientes values (8, 25133255, "Claudio","Sosa","claudiososa@gmail.com",23143219876, "calle 14 y 63","Pet shop", "Mercado Pago");
+insert into clientes values (9, 22314555, "Martina","De Blasi","MartuDebla@gmail.com",231454943,"calle 12 y 65", "Gas SRL", "Mercado Pago");
+insert into clientes values (10, 22144565, "Mercedes","Villa","mervilla@gmail.com",2314549236,"Calle 8 y 9","Merceria", "Efectivo");
+insert into clientes values (11, 25144598, "Diego","Sosa","Diegososa@gmail.com",2314549876,"12 e/4 y 5","INSUMOS SRL", "Efectivo");
+savepoint Cuadrante1;
+insert into clientes values (13, 41144500, "Pipo","beltran","pipo@gmail.com",2314545689,"14 e/ 6 y7","Veterinaria", "Efectivo");
+insert into clientes values (14, 43144512, "Julio","Perez","jullioperez@gmail.com",2314587476,"5 e/ 9 y 10","Contabilidad Grupo", "Efectivo");
+insert into clientes values (15, 34144512, "Cluadia","Fredes","cluafredes@gmail.com",23146985876,"7 e/ 3 y 5","OPENIA.COM", "Efectivo");
+insert into clientes values (16, 29144147, "Myriam","Bazar","myriambazar@gmail.com",2314412576,"74 e/ 12 y 13","Nike", "Efectivo");
+savepoint Cuadrante2;
